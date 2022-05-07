@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:clickable_list_wheel_view/clickable_list_wheel_widget.dart';
+import 'package:traffic_police/screens/create_user_screen.dart';
 // import 'package:traffic_police/screens/search_screen.dart';
 import 'package:traffic_police/screens/vehicle_info.dart';
 
@@ -81,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemHeight: 200,
               itemCount: 5,
               onItemTapCallback: (index) => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => VehicleInformationScreen())),
+                  MaterialPageRoute(builder: (context) => CreateUserScreen())),
               child: ListWheelScrollView(
                   controller: _controller,
                   itemExtent: 200,

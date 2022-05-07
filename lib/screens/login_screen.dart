@@ -14,49 +14,44 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(bottom: 30),
         child: Column(
           children: <Widget>[
             HeaderContainer("Login"),
             Expanded(
-              flex: 1,
               child: Container(
                 margin: EdgeInsets.only(left: 20, right: 20, top: 30),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
+                child: ListView(
+                  children: [
                     _textInput(hint: "Email", icon: Icons.email),
                     _textInput(hint: "Password", icon: Icons.vpn_key),
                     Container(
-                      margin: EdgeInsets.only(top: 10),
+                      margin: EdgeInsets.only(top: 10, bottom: 20),
                       alignment: Alignment.centerRight,
                       child: Text(
                         "Forgot Password?",
                       ),
                     ),
-                    Expanded(
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 10.0,
+                      ),
                       child: Center(
-                        child: ButtonWidget(
-                          onClick: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                          },
-                          btnText: "LOGIN",
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: Center(
+                            child: ButtonWidget(
+                              btnText: "LOGIN",
+                              onClick: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                            text: "Don't have an account ? ",
-                            style: TextStyle(color: Colors.black)),
-                        TextSpan(
-                            text: "Register",
-                            style: TextStyle(color: Color(0xffF5591F))),
-                      ]),
-                    )
                   ],
                 ),
               ),
