@@ -44,7 +44,7 @@ class _SplashPageState extends State<SplashPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [Color(0x1592ff), Color(0xff1592ff)],
+              colors: [Colors.white, Colors.white12],
               end: Alignment.bottomCenter,
               begin: Alignment.topCenter),
         ),
@@ -52,7 +52,7 @@ class _SplashPageState extends State<SplashPage> {
             child: Container(
               height: 200,
           child: Center(
-            child: Image.asset("assets/police.png"),
+            child: Image.asset("assets/pol.jpeg"),
           ),
         )),
       ),

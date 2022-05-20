@@ -12,7 +12,7 @@ class HeaderContainer extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.4,
       decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [Color(0x1592ff), Color(0xff1592ff)],
+              colors: [Colors.white, Colors.white12],
               end: Alignment.bottomCenter,
               begin: Alignment.topCenter),
           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100))),
@@ -23,13 +23,13 @@ class HeaderContainer extends StatelessWidget {
               right: 20,
               child: Text(
                 text,
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(color: Colors.black, fontSize: 20),
               )),
           Center(
             child: Container(
               height: 100,
               child: Center(
-                child: Image.asset("assets/police.png"),
+                child: Image.asset("assets/pol.jpeg"),
               ),
             ),
           ),

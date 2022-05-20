@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:clickable_list_wheel_view/clickable_list_wheel_widget.dart';
 import 'package:traffic_police/screens/create_user_screen.dart';
-// import 'package:traffic_police/screens/search_screen.dart';
-import 'package:traffic_police/screens/vehicle_info.dart';
+import 'package:traffic_police/screens/history_screen.dart';
+import 'package:traffic_police/screens/profile_screen.dart';
+import 'package:traffic_police/screens/report_violator_screen.dart';
+import 'package:traffic_police/screens/search_screen.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -40,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(50),
               ),
-              color: Color(0xFF363f93),
+              color: Color(0xff1592ff),
             ),
             child: Stack(
               children: [
@@ -63,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   top: 115,
                   left: 20,
                   child: Text(
-                    "Welcome Inspector Chromo",
+                    "MTTU Personnel Clifford",
                     style: TextStyle(
                       fontSize: 20,
                       color: Color(0xFF363f93),
@@ -81,8 +84,16 @@ class _HomeScreenState extends State<HomeScreen> {
               scrollController: _controller,
               itemHeight: 200,
               itemCount: 5,
-              onItemTapCallback: (index) => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CreateUserScreen())),
+              onItemTapCallback: (index) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => index == 0
+                          ? SearchScreen()
+                          : index == 1
+                              ? ReportViolatorScreen()
+                              : index == 2
+                                  ? HistoryLogScreen()
+                                  : ProfileScreen())),
               child: ListWheelScrollView(
                   controller: _controller,
                   itemExtent: 200,
@@ -94,11 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     print("onSelectedItemChanged index: $index");
                   },
                   children: [
-                    _buildCard(0, Icons.search, 'Search'),
-                    _buildCard(1, Icons.report, 'Report Violator'),
-                    _buildCard(2, Icons.info, 'Detail'),
-                    _buildCard(3, Icons.menu, 'Search'),
-                    _buildCard(4, Icons.menu, 'Search')
+                    _buildCard(0, FontAwesomeIcons.searchengin, 'Search'),
+                    _buildCard(
+                        1, FontAwesomeIcons.addressCard, 'Report Violator'),
+                    _buildCard(2, FontAwesomeIcons.clockRotateLeft, 'History'),
+                    // _buildCard(3, Icons.menu, 'Search'),
+                    _buildCard(3, FontAwesomeIcons.user, 'Profile'),
                   ]
                   // childDelegate: ListWheelChildBuilderDelegate(
                   //   builder: (context, index) => _buildCard(index: index),

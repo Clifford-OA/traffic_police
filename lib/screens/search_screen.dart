@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:traffic_police/screens/vehicle_info.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -69,7 +70,13 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      VehicleInformationScreen()));
+                        },
                         child: Text('Go!'),
                         style: ButtonStyle(
                             backgroundColor:
