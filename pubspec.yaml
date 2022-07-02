@@ -30,6 +30,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   clickable_list_wheel_view:
   font_awesome_flutter:
+  firebase_auth:
+  provider:
+  firebase_storage:
+  firebase_core:
+  cloud_firestore:
+  fluttertoast:
+  image_picker:
 
 dev_dependencies:
   flutter_test:

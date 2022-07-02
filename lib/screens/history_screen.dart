@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:traffic_police/screens/home_screen.dart';
 
 class HistoryLogScreen extends StatefulWidget {
   const HistoryLogScreen({
@@ -14,6 +15,9 @@ class _HistoryLogScreenState extends State<HistoryLogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: BackButton(
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()))),
           title: const Text('History'),
         ),
         body: SingleChildScrollView(

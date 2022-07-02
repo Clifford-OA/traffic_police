@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:traffic_police/auth/auth.dart';
+import 'package:traffic_police/auth/police.dart';
+import 'package:traffic_police/screens/home_screen.dart';
 import 'package:traffic_police/widgets/button_widget.dart';
 import 'package:traffic_police/widgets/header_container.dart';
 
@@ -10,6 +14,13 @@ class CreateUserScreen extends StatefulWidget {
 }
 
 class _CreateUserScreenState extends State<CreateUserScreen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _checkPointController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,26 +32,39 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             Expanded(
               child: ListView(
                 children: [
-                  _textInput(hint: "Fullname", icon: Icons.person),
-                  _textInput(hint: "Email", icon: Icons.email),
-                  _textInput(hint: "Phone Number", icon: Icons.call),
-                  _textInput(hint: "Password", icon: Icons.vpn_key),
+                  _textInput(
+                      hint: "Name",
+                      icon: Icons.person,
+                      controller: _nameController),
+                  _textInput(
+                      hint: "Check Point",
+                      icon: Icons.check,
+                      controller: _checkPointController),
+                  _textInput(
+                      hint: "Corperate email",
+                      icon: Icons.email,
+                      controller: _emailController),
+                  _textInput(
+                      hint: "Password",
+                      icon: Icons.lock,
+                      controller: _passwordController),
                   Padding(
-                    padding: EdgeInsets.only(top: 10.0, ),
-                    child: Center(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 2,
-                        child: Center(
-                          child: ButtonWidget(
-                            btnText: "REGISTER",
-                            onClick: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
+                      padding: EdgeInsets.only(
+                        top: 10.0,
                       ),
-                    ),
-                  ),
+                      child: Center(
+                        child: isLoading == false
+                            ? Container(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: Center(
+                                  child: ButtonWidget(
+                                    btnText: "REGISTER",
+                                    onClick: _validateAndSignUp,
+                                  ),
+                                ),
+                              )
+                            : CircularProgressIndicator(),
+                      )),
                 ],
               ),
             ),
@@ -48,6 +72,45 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
         ),
       ),
     );
+  }
+
+  void _validateAndSignUp() {
+    final police = Provider.of<Police>(context, listen: false);
+    Police _police = police.policeData;
+    // final errorResult = validateName();
+    // if (errorResult['status']) {
+    setState(() {
+      isLoading = true;
+    });
+    AuthClass()
+        .createAccount(_police, _emailController.text, _passwordController.text)
+        .then((value) async {
+      if (value['status']) {
+        _police.checkPoint = _checkPointController.text;
+        _police.name = _nameController.text;
+        _police.email = _emailController.text;
+        await _police.saveInfo();
+        // _loadUserData();
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                'User with email address ${_emailController.text} is created successfully ')));
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(value['message'])));
+      }
+    });
+    //   } else {
+    //     ScaffoldMessenger.of(context)
+    //         .showSnackBar(SnackBar(content: Text(errorResult['message'])));
+    //   }
   }
 
   Widget _textInput({controller, hint, icon}) {

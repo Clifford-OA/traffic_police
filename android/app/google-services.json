@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "291551879672",
+    "project_id": "challan2022-d91fc",
+    "storage_bucket": "challan2022-d91fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291551879672:android:34ceb287b2630d81c5360d",
+        "android_client_info": {
+          "package_name": "com.example.my_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291551879672-ucjfbdsvbqffhuafbsijs5i83opc3i3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy_2kxf7IJdet_ANUWSRSxf4O8A3uRYsc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291551879672-ucjfbdsvbqffhuafbsijs5i83opc3i3k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "291551879672-td4vd21gnvpm7sje5an8s70cl1ls1de4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.felixgyabaa.myApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291551879672:android:2d90621c1ba2cfd7c5360d",
+        "android_client_info": {
+          "package_name": "com.example.traffic_police"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291551879672-on01jh9um1s16mu0kgibfach98iv8830.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.traffic_police",
+            "certificate_hash": "fb6be6317cf3603ce9391a0aba225fa3e23d89bc"
+          }
+        },
+        {
+          "client_id": "291551879672-ucjfbdsvbqffhuafbsijs5i83opc3i3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy_2kxf7IJdet_ANUWSRSxf4O8A3uRYsc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291551879672-ucjfbdsvbqffhuafbsijs5i83opc3i3k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "291551879672-td4vd21gnvpm7sje5an8s70cl1ls1de4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.felixgyabaa.myApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

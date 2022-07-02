@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:clickable_list_wheel_view/clickable_list_wheel_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:traffic_police/auth/auth.dart';
+import 'package:traffic_police/auth/police.dart';
 import 'package:traffic_police/screens/create_user_screen.dart';
 import 'package:traffic_police/screens/history_screen.dart';
 import 'package:traffic_police/screens/profile_screen.dart';
@@ -31,6 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final police = Provider.of<Police>(context, listen: false);
+    bool _admin = police.admin;
+    String _name = police.name;
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -66,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   top: 115,
                   left: 20,
                   child: Text(
-                    "MTTU Personnel Clifford",
+                    "Hi $_name",
                     style: TextStyle(
                       fontSize: 20,
                       color: Color(0xFF363f93),
@@ -93,7 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? ReportViolatorScreen()
                               : index == 2
                                   ? HistoryLogScreen()
-                                  : ProfileScreen())),
+                                  : index == 3
+                                      ? ProfileScreen()
+                                      : CreateUserScreen())),
               child: ListWheelScrollView(
                   controller: _controller,
                   itemExtent: 200,
@@ -109,8 +118,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     _buildCard(
                         1, FontAwesomeIcons.addressCard, 'Report Violator'),
                     _buildCard(2, FontAwesomeIcons.clockRotateLeft, 'History'),
-                    // _buildCard(3, Icons.menu, 'Search'),
                     _buildCard(3, FontAwesomeIcons.user, 'Profile'),
+                    _admin
+                        ? _buildCard(4, FontAwesomeIcons.userPlus, 'Add User')
+                        : Center(),
                   ]
                   // childDelegate: ListWheelChildBuilderDelegate(
                   //   builder: (context, index) => _buildCard(index: index),

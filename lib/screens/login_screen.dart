@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:traffic_police/auth/auth.dart';
+import 'package:traffic_police/auth/police.dart';
 import 'package:traffic_police/screens/home_screen.dart';
+import 'package:traffic_police/utils/fetch_police_data.dart';
 // import 'package:traffic_police/screens/register_screen.dart';
 import 'package:traffic_police/widgets/button_widget.dart';
 import 'package:traffic_police/widgets/header_container.dart';
@@ -10,6 +15,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  FetchPoliceData _fetchPoliceData = new FetchPoliceData();
+
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,8 +34,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 margin: EdgeInsets.only(left: 20, right: 20, top: 30),
                 child: ListView(
                   children: [
-                    _textInput(hint: "Email", icon: Icons.email),
-                    _textInput(hint: "Password", icon: Icons.vpn_key),
+                    _textInput(
+                        hint: "Corperate Email",
+                        icon: Icons.email,
+                        controller: _emailController),
+                    _textInput(
+                        hint: "Password",
+                        icon: Icons.vpn_key,
+                        controller: _passwordController),
                     Container(
                       margin: EdgeInsets.only(top: 10, bottom: 20),
                       alignment: Alignment.centerRight,
@@ -39,15 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Container(
                           width: MediaQuery.of(context).size.width / 2,
                           child: Center(
-                            child: ButtonWidget(
-                              btnText: "LOGIN",
-                              onClick: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
-                              },
-                            ),
+                            child: isLoading == false
+                                ? ButtonWidget(
+                                    btnText: "LOGIN",
+                                    onClick: _signUserIn,
+                                  )
+                                : CircularProgressIndicator(),
                           ),
                         ),
                       ),
@@ -60,6 +75,32 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void _signUserIn() {
+    final police = Provider.of<Police>(context, listen: false);
+    Police _police = police.policeData;
+    setState(() {
+      isLoading = true;
+    });
+    AuthClass()
+        .signIN(_police, _emailController.text, _passwordController.text)
+        .then((value) async {
+      if (value['status']) {
+        _fetchPoliceData.loadUserData(context);
+        setState(() {
+          isLoading = false;
+        });
+        return Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        return ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(value['message'])));
+      }
+    });
   }
 
   Widget _textInput({controller, hint, icon}) {
