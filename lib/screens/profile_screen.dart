@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:traffic_police/auth/police.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -13,6 +15,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   double kDefaultPadding = 10.0;
   @override
   Widget build(BuildContext context) {
+    final police = Provider.of<Police>(context, listen: false);
+    Map<String, dynamic> _policeInfo = police.policeRef;
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -36,19 +40,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundImage: AssetImage('assets/police.png'),
               ),
             ),
-            ListTile(leading: Text('Name:'), title: Text('Felix Gyabaa')),
+            ListTile(leading: Text('Name:'), title: Text(_policeInfo['name'])),
             Divider(),
-            ListTile(leading: Text('Tel:'), title: Text('0247336972')),
+            ListTile(leading: Text('Tel:'), title: Text(_policeInfo['tel'])),
             Divider(),
-            ListTile(leading: Text('Check Point:'), title: Text('Ayeduase')),
+            ListTile(leading: Text('Check Point:'), title: Text(_policeInfo['checkPoint'])),
             Divider(),
             ListTile(
                 leading: Text('Email:'),
-                title: Text('gyabaafelix01@gmail.com')),
+                title: Text(_policeInfo['email'])),
             Divider(),
             ListTile(
                 leading: Text('Address:'),
-                title: Text('ND 73/S New Dormaa, Sunyani')),
+                title: Text(_policeInfo['address'])),
             Divider()
           ],
         ),

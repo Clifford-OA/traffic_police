@@ -9,6 +9,9 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController _vehicleNumberController =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +64,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     children: [
                       Expanded(
                         child: TextField(
+                          controller: _vehicleNumberController,
+                          // keyboardType: TextInputType.,
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
@@ -75,7 +80,9 @@ class _SearchScreenState extends State<SearchScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      VehicleInformationScreen()));
+                                      VehicleInformationScreen(
+                                          _vehicleNumberController.text
+                                              .trim())));
                         },
                         child: Text('Go!'),
                         style: ButtonStyle(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:traffic_police/auth/auth.dart';
 import 'package:traffic_police/auth/police.dart';
 import 'package:traffic_police/screens/history_screen.dart';
 import 'package:traffic_police/utils/get_image.dart';
@@ -22,6 +23,7 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   final TextEditingController _amount = TextEditingController();
 
   bool _loadImage = false;
+  bool _isLoading = false;
   String imgUrl = '';
 
   GetImage _getImgRef = new GetImage();
@@ -121,13 +123,17 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
               Container(
                 height: 50,
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: ElevatedButton(
-                  child: const Text('Report'),
-                  style: ElevatedButton.styleFrom(
-                    onPrimary: Colors.white,
-                  ),
-                  onPressed: _validateAndBook,
-                ),
+                child: _isLoading == false
+                    ? ElevatedButton(
+                        child: const Text('Report'),
+                        style: ElevatedButton.styleFrom(
+                          onPrimary: Colors.white,
+                        ),
+                        onPressed: _validateAndBook,
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(),
+                      ),
               ),
             ],
           ),
@@ -146,6 +152,9 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   void _validateAndBook() {
     final errorResult = _validate();
     if (errorResult['status']) {
+      setState(() {
+        _isLoading = true;
+      });
       _addToFineList();
     } else {
       ScaffoldMessenger.of(context)
@@ -155,6 +164,8 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
 
   Future<void> _addToFineList() async {
     List fineItem = [];
+    String vehiNumber = _vehicleNumber.text.trim();
+    final docId = '$vehiNumber';
     List<String> ids = [];
     fineItem.add(toMap());
     print(fineItem);
@@ -166,11 +177,14 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
         ids.add(doc.id);
       });
     });
-    if (ids.contains(_vehicleNumber.text.trim())) {
+    if (ids.contains(docId)) {
       await fineList
-          .doc(_vehicleNumber.text.trim())
+          .doc(docId)
           .update({'finedList': FieldValue.arrayUnion(fineItem)}).then((value) {
         print('Fine updated');
+        setState(() {
+          _isLoading = false;
+        });
         // _addToBookDateList();
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => HistoryLogScreen()));
@@ -179,10 +193,12 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
       });
     } else {
       await fineList
-          .doc(_vehicleNumber.text.trim())
+          .doc(docId)
           .set({'finedList': FieldValue.arrayUnion(fineItem)}).then((value) {
         print('Fine created');
-
+        setState(() {
+          _isLoading = false;
+        });
         // _addToBookDateList();
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => HistoryLogScreen()));
@@ -193,14 +209,17 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   }
 
   Map<String, dynamic> toMap() {
+    final authClass = Provider.of<AuthClass>(context, listen: false);
+    final tid = authClass.auth.currentUser!.uid;
     return {
-      'vehicleNumber': _vehicleNumber.text,
+      'vehicleNumber': _vehicleNumber.text.toUpperCase(),
       'amount': _amount.text,
       'description': _description.text,
       'imgUrl': imgUrl,
       'fineId': 'sdkde2343df',
       'date': DateTime.now(),
       'status': false,
+      'tid': tid,
     };
   }
 

@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:traffic_police/widgets/challan_card.dart';
 
 class VehicleInformationScreen extends StatefulWidget {
-  const VehicleInformationScreen({Key? key}) : super(key: key);
+  final vehicleNumber;
+  const VehicleInformationScreen(this.vehicleNumber, {Key? key})
+      : super(key: key);
 
   @override
   State<VehicleInformationScreen> createState() =>
@@ -9,6 +13,36 @@ class VehicleInformationScreen extends StatefulWidget {
 }
 
 class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
+  Future<Widget> _displayVehicleInfo(
+      BuildContext context, String vehicleNumber) async {
+    List<Widget> list = [
+      SizedBox(height: 0.0),
+    ];
+    await FirebaseFirestore.instance
+        .collection('fineList')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        if (doc.id == vehicleNumber) {
+          List<dynamic> data = doc['finedList'];
+          print(data);
+          for (var i = 0; i < data.length; i++) {
+            // if(data[i]['status'] == 'done') {
+            list.add(ChallanCard(data[i]));
+            // }
+          }
+        }
+      });
+    });
+    return list.length > 1
+        ? Column(
+            children: list,
+          )
+        : Center(
+            child: Text('Your history list is empty'),
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -37,12 +71,23 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
                           )),
                       child: ListView(
                         children: [
-                          _challanCard(),
-                          _challanCard(),
-                          _challanCard(),
-                          _challanCard(),
-                          _challanCard(),
-                          _challanCard(),
+                          FutureBuilder<Widget>(
+                              future: _displayVehicleInfo(
+                                  context,
+                                  widget.vehicleNumber
+                                      .toString()
+                                      .toUpperCase()),
+                              builder: (BuildContext context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData) {
+                                    return snapshot.data as Widget;
+                                  }
+                                }
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }),
                         ],
                       ),
                     ),
@@ -105,115 +150,6 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _challanCard() {
-    return Container(
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(10),
-      // height: MediaQuery.of(context).size.height / 4,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            blurRadius: 7,
-          )
-        ],
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 10, bottom: 10),
-            child: Text(
-              'Challan ID: #123456343',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(15),
-                  padding: EdgeInsets.only(right: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Challan Date',
-                        style: TextStyle(color: Colors.grey.shade400),
-                      ),
-                      Text(
-                        '19 Nov, 20',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Payment Date',
-                        style: TextStyle(color: Colors.grey.shade400),
-                      ),
-                      Text(
-                        '19 Nov, 20',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Status',
-                        style: TextStyle(color: Colors.grey.shade400),
-                      ),
-                      Text(
-                        'Paid',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Amount',
-                        style: TextStyle(color: Colors.grey.shade400),
-                      ),
-                      Text(
-                        'Ghc 200',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

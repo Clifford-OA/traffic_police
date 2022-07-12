@@ -17,9 +17,8 @@ class Police extends ChangeNotifier {
   DocumentReference get firestoreRef =>
       FirebaseFirestore.instance.collection('police').doc('$tid');
 
-      Police get policeData =>
+  Police get policeData =>
       Police(admin, imgUrl, tid, name, tel, checkPoint, email, address);
-
 
   Future<void> saveInfo() async {
     await firestoreRef.set(toMap());
@@ -38,7 +37,6 @@ class Police extends ChangeNotifier {
     };
   }
 
-  
   set policeRef(Map<String, dynamic> data) {
     name = data['name'];
     imgUrl = data['imgUrl'];
@@ -52,7 +50,16 @@ class Police extends ChangeNotifier {
   }
 
   Map<String, dynamic> get policeRef {
-    return {'tid': tid, 'name': name, 'admin': admin};
+    return {
+      'tid': tid,
+      'name': name,
+      'email': email,
+      'admin': admin,
+      'checkPoint': checkPoint,
+      'tel': tel,
+      'address': address,
+      'imgUrl': imgUrl
+    };
   }
 }
 
