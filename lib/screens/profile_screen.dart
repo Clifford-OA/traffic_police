@@ -20,15 +20,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              child: Icon(FontAwesomeIcons.pen),
-              onTap: () => print('edit button clicked'),
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -37,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.all(30.0),
               child: CircleAvatar(
                 radius: 90,
-                backgroundImage: AssetImage('assets/police.png'),
+                backgroundImage: AssetImage('assets/gh_police.jpg'),
               ),
             ),
             ListTile(leading: Text('Name:'), title: Text(_policeInfo['name'])),

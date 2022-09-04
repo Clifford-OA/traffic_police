@@ -69,24 +69,6 @@ class _HistoryLogScreenState extends State<HistoryLogScreen> {
                       child: CircularProgressIndicator(),
                     );
                   }),
-              // ListView.builder(
-              //   scrollDirection: Axis.vertical,
-              //   physics: const BouncingScrollPhysics(),
-              //   itemBuilder: ((context, index) {
-              //     return GestureDetector(
-              //         child: ListTile(
-              //           leading: Image.asset('assets/pol.jpeg'),
-              //           title:
-              //               const Text('Kumasi, Ayeduase \nStreet number 17'),
-              //           subtitle: const Text('¢ 20.00'),
-              //           trailing: const Text('status',
-              //               style: TextStyle(fontSize: 20)),
-              //         ),
-              //         onTap: () {});
-              //   }),
-              //   itemCount: 3,
-              //   shrinkWrap: true,
-              // )
             ],
           ),
         ));

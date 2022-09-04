@@ -14,7 +14,9 @@ class AuthClass with ChangeNotifier {
   CollectionReference policeColRef =
       FirebaseFirestore.instance.collection('police');
 
-  String get policeId  => auth.currentUser!.uid;
+  String get policeId  => auth.currentUser!.uid; 
+  User? get currentPolice => auth.currentUser; 
+
 
 
   Future<Map> createAccount(Police _police, String email, String password) async {

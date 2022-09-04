@@ -1,33 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:traffic_police/auth/auth.dart';
-import 'package:traffic_police/auth/police.dart';
-import 'package:traffic_police/screens/home_screen.dart';
-import 'package:traffic_police/utils/fetch_police_data.dart';
+import 'package:traffic_police/screens/login_screen.dart';
 import 'package:traffic_police/widgets/button_widget.dart';
 import 'package:traffic_police/widgets/header_container.dart';
 
-class LoginScreen extends StatefulWidget {
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({Key? key}) : super(key: key);
+
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  FetchPoliceData _fetchPoliceData = new FetchPoliceData();
-
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-
+class _ForgotPasswordState extends State<ForgotPassword> {
+  final TextEditingController _emailController = TextEditingController();
   bool isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         child: Column(
           children: <Widget>[
-            HeaderContainer("Login"),
+            HeaderContainer("Reset Password"),
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(left: 20, right: 20, top: 30),
@@ -37,10 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: "Corperate Email",
                         icon: Icons.email,
                         controller: _emailController),
-                    _textInput(
-                        hint: "Password",
-                        icon: Icons.vpn_key,
-                        controller: _passwordController),
                     Container(
                       margin: EdgeInsets.only(top: 10, bottom: 20),
                       alignment: Alignment.centerRight,
@@ -58,8 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Center(
                             child: isLoading == false
                                 ? ButtonWidget(
-                                    btnText: "LOGIN",
-                                    onClick: _signUserIn,
+                                    btnText: "Send",
+                                    onClick: _resetUserPassword,
                                   )
                                 : CircularProgressIndicator(),
                           ),
@@ -76,22 +65,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _signUserIn() {
-    final police = Provider.of<Police>(context, listen: false);
-    Police _police = police.policeData;
+  void _resetUserPassword() {
     setState(() {
       isLoading = true;
     });
-    AuthClass()
-        .signIN(_police, _emailController.text, _passwordController.text)
-        .then((value) async {
+    AuthClass().resetPassword(_emailController.text).then((value) async {
       if (value['status']) {
-        _fetchPoliceData.loadUserData(context);
         setState(() {
           isLoading = false;
         });
-        return Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Please check your email to reset your password')));
+        return Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => LoginScreen()));
       } else {
         setState(() {
           isLoading = false;

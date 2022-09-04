@@ -29,7 +29,7 @@ class HeaderContainer extends StatelessWidget {
             child: Container(
               height: 100,
               child: Center(
-                child: Image.asset("assets/pol.jpeg"),
+                child: Image.asset("assets/police.png"),
               ),
             ),
           ),

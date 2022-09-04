@@ -8,7 +8,7 @@ class GetImage{
 
   Future getImage() async {
     late File image;
-    final XFile? img = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? img = await _picker.pickImage(source: ImageSource.camera);
     File file = File(img!.path);
     image = file;
     var storeImage = FirebaseStorage.instance.ref().child(image.path);

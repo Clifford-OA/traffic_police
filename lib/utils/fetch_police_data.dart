@@ -5,7 +5,6 @@ import 'package:traffic_police/auth/auth.dart';
 import 'package:traffic_police/auth/police.dart';
 
 class FetchPoliceData {
-
   void loadUserData(BuildContext context) async {
     CollectionReference stylist =
         FirebaseFirestore.instance.collection('police');
@@ -19,3 +18,4 @@ class FetchPoliceData {
     });
   }
 }
+

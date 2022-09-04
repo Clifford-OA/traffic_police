@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:traffic_police/auth/auth.dart';
 import 'package:traffic_police/auth/police.dart';
@@ -31,7 +32,10 @@ class _MyAppState extends State<MyApp> {
       builder: ((context, snapshot) {
         if (snapshot.hasError) {
           return Container(
-            child: Text('Error'),
+            child: Text(
+              'Error',
+              textDirection: TextDirection.ltr,
+            ),
           );
         }
         if (snapshot.connectionState == ConnectionState.done) {
@@ -84,16 +88,25 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     final authClass = Provider.of<AuthClass>(context, listen: false);
-    final String uid = authClass.policeId;
-    print(uid);
+    // final firebaseUser = FirebaseAuth.instance.currentUser;
+    final police = authClass.currentPolice;
+    // print(uid);
+    // print(uid.runtimeType);
     super.initState();
     _fetchPoliceData.loadUserData(context);
     Timer(const Duration(milliseconds: 4000), () {
+      // if (uid == null ) {
+      //   Navigator.push(
+      //       context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      // } else {
+      //   Navigator.push(
+      //       context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      // }
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  uid.isEmpty ? LoginScreen() : HomeScreen()));
+                  police == null ? LoginScreen() : HomeScreen()));
     });
   }
 
@@ -111,7 +124,7 @@ class _SplashPageState extends State<SplashPage> {
             child: Container(
           height: 200,
           child: Center(
-            child: Image.asset("assets/pol.jpeg"),
+            child: Image.asset("assets/police.png"),
           ),
         )),
       ),
