@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:io' as io;
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -29,10 +30,10 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   final TextEditingController _vehicleRegion = TextEditingController();
   final TextEditingController _vehicleYear = TextEditingController();
   final TextEditingController _description = TextEditingController();
-  final TextEditingController _amount = TextEditingController();
+  // final TextEditingController _amount = TextEditingController();
 
   late String _vehicleNumberText;
-
+  late io.File imageFile;
   var vehicleYearInputFormatter = [
     FilteringTextInputFormatter.allow(RegExp('[0-9]')),
     FilteringTextInputFormatter.deny(RegExp('[]'))
@@ -47,9 +48,20 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
 
   bool _loadImage = false;
   bool _isLoading = false;
+  bool _isLoadingImage = false;
   String imgUrl = '';
 
   GetImage _getImgRef = new GetImage();
+
+  String selectedAmount = 'select one';
+  List<String> _fineAmounts = [
+    'select one',
+    '100',
+    '150',
+    '200',
+    '250',
+    '300',
+  ];
 
   @override
   void initState() {
@@ -60,7 +72,7 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
       _vehicleNumber.clear();
       _vehicleYear.clear();
       _description.clear();
-      _amount.clear();
+      // _amount.clear();
     });
     super.initState();
   }
@@ -75,49 +87,45 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
           child: Column(
             children: [
               Container(
-                height: 230,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(15),
-                    bottomLeft: Radius.circular(15),
+                  height: 230,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(15),
+                      bottomLeft: Radius.circular(15),
+                    ),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      colorFilter:
+                          ColorFilter.mode(Colors.black26, BlendMode.darken),
+                      image: AssetImage('assets/police.png'),
+                    ),
+                    color: Color(0xff1592ff),
                   ),
-                  image: (_loadImage == false) && (imgUrl.isNotEmpty)
-                      ? DecorationImage(
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                              Colors.black26, BlendMode.darken),
-                          image: NetworkImage(imgUrl),
-                        )
-                      : DecorationImage(
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                              Colors.black26, BlendMode.darken),
-                          image: AssetImage('assets/police.png'),
-                        ),
-                  color: Color(0xff1592ff),
-                ),
-                child: _loadImage == false
-                    ? Stack(
-                        children: [
-                          Positioned(
-                            top: 170,
-                            left: 300,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.white,
+                  child: _isLoadingImage == false
+                      ? Stack(
+                          children: [
+                            Positioned(
+                              top: 170,
+                              left: 300,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.black54,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: _getImage,
                                 ),
-                                onPressed: _getImage,
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Center(child: CircularProgressIndicator()),
-              ),
+                          ],
+                        )
+                      : Image.file(
+                          imageFile,
+                          fit: BoxFit.cover,
+                        )),
               Form(
                   key: _vehicleNumberFormKey,
                   child: Column(
@@ -190,16 +198,37 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
                           maxLines: 3,
                         ),
                       ),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Container(
-                        padding: const EdgeInsets.all(10),
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          controller: _amount,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Amount',
+                        width: MediaQuery.of(context).size.width - 50,
+                        child: DropdownButton(
+                          value: selectedAmount,
+                          items: _fineAmounts.map((String workingDay) {
+                            return DropdownMenuItem(
+                              value: workingDay,
+                              child: Text(workingDay),
+                            );
+                          }).toList(),
+                          hint: Text('Choose amount'),
+                          dropdownColor: Colors.white,
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 25,
+                          isExpanded: true,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 22,
                           ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedAmount = newValue!;
+                            });
+                          },
                         ),
+                      ),
+                      SizedBox(
+                        height: 50,
                       ),
                       Container(
                         height: 50,
@@ -227,9 +256,14 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
     setState(() {
       _loadImage = true;
     });
-    var imageUrl = await _getImgRef.getImage();
+    // print(_loadImage);
+    print(_isLoadingImage);
+    dynamic imageUrl = await _getImgRef.getImage();
+
     setState(() {
-      imgUrl = imageUrl;
+      imageFile = imageUrl;
+      _isLoadingImage = true;
+      // imgUrl = imageUrl.toString().split("'")[1];
     });
     setState(() {
       _loadImage = false;
@@ -254,89 +288,65 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   }
 
   Future<void> _addToFineList() async {
-    List fineItem = [];
-    String vehiNumber = _vehicleNumberText.trim();
-    final docId = '$vehiNumber';
+    var uuid = Uuid();
+
+    // List fineItem = [];
+    String vehiNumber = _vehicleNumberText;
+    final docId = uuid.v4().split('-')[0];
     CollectionReference civilian =
         FirebaseFirestore.instance.collection('civilian');
-    late Map<String, dynamic> returnData;
+    late Map<String, dynamic> violatorData;
+
+    // loadImage url
+    imgUrl = await _getImgRef.imageToFireStorage();
+
     await civilian.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        List<dynamic> vehicles = data['vehicleNumber'];
+        List<dynamic> vehicles = data['vehicles'];
         for (var i = 0; i < vehicles.length; i++) {
           if (vehicles[i] == vehiNumber) {
-            returnData = data;
+            violatorData = data;
             break;
           }
         }
       });
     });
-    List<String> ids = [];
-    fineItem.add(toMap());
-    await FirebaseFirestore.instance
-        .collection('fineList')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        ids.add(doc.id);
+
+    // fineItem.add(toMap(docId));
+    await fineList.doc(docId).set(toMap(docId, violatorData)).then((value) {
+      print('Fine created');
+      setState(() {
+        _isLoading = false;
       });
+      // _addToBookDateList();
+      // SendEmailClass().sendEmail(
+      //     toEmail: violatorData['email'],
+      //     description: _description.text,
+      //     fineAmount: selectedAmount,
+      //     toName: violatorData['name']);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HistoryLogScreen()));
+    }).catchError((error) {
+      print("Failed to create fine: $error");
     });
-    if (ids.contains(docId)) {
-      await fineList
-          .doc(docId)
-          .update({'finedList': FieldValue.arrayUnion(fineItem)}).then((value) async {
-        print('Fine updated');
-        setState(() {
-          _isLoading = false;
-        });
-        print(returnData);
-        // _addToBookDateList();
-        await SendEmailClass().sendEmail(
-            toEmail: returnData['email'],
-            description: _description.text,
-            fineAmount: _amount.text,
-            toName: returnData['name']);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => HistoryLogScreen()));
-      }).catchError((error) {
-        print("Failed to update fine: $error");
-      });
-    } else {
-      await fineList
-          .doc(docId)
-          .set({'finedList': FieldValue.arrayUnion(fineItem)}).then((value) {
-        print('Fine created');
-        setState(() {
-          _isLoading = false;
-        });
-        // _addToBookDateList();
-        SendEmailClass().sendEmail(
-            toEmail: returnData['email'],
-            description: _description.text,
-            fineAmount: _amount.text,
-            toName: returnData['name']);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => HistoryLogScreen()));
-      }).catchError((error) {
-        print("Failed to create fine: $error");
-      });
-    }
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(String fineId, violatorDetail) {
     final authClass = Provider.of<AuthClass>(context, listen: false);
     final tid = authClass.auth.currentUser!.uid;
-    var uuid = Uuid();
-
+   
     return {
-      'vehicleNumber': _vehicleNumber.text.toUpperCase(),
-      'amount': _amount.text,
+      'vehicleNumber': _vehicleNumberText,
+      'amount': selectedAmount,
       'description': _description.text,
       'imgUrl': imgUrl,
-      'fineId': uuid.v4(),
+      'fineId': fineId,
       'fine_date': DateTime.now(),
       'paid_date': '',
+      'violator_email': violatorDetail['email'],
+      'violator_name': violatorDetail['name'],
+      'violator_tel': violatorDetail['phone'],
       'status': false,
       'tid': tid,
     };
@@ -348,15 +358,11 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
       errorHandler['message'] =
           'Description should not be empty or less than 10 characters';
       return errorHandler;
-    } else if (imgUrl.isEmpty) {
+    } else if (!_isLoadingImage) {
       errorHandler['message'] = 'Image should not be empty';
       return errorHandler;
-    } else if (_amount.text.isEmpty) {
-      errorHandler['message'] = 'Amount of fine should not be empty';
-      return errorHandler;
-    } else if (_vehicleNumberText.isEmpty || _vehicleNumberText.length < 4) {
-      errorHandler['message'] =
-          'Please license number should not be empty and should be greater than 3 characters';
+    } else if (selectedAmount == 'select one') {
+      errorHandler['message'] = 'Select fine amount';
       return errorHandler;
     } else {
       errorHandler['status'] = true;

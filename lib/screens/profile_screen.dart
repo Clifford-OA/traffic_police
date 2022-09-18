@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:traffic_police/auth/police.dart';
+import 'package:traffic_police/screens/edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -20,6 +21,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => EditUserProfile()))),
+              icon: Icon(Icons.edit))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -35,15 +42,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Divider(),
             ListTile(leading: Text('Tel:'), title: Text(_policeInfo['tel'])),
             Divider(),
-            ListTile(leading: Text('Check Point:'), title: Text(_policeInfo['checkPoint'])),
+            ListTile(
+                leading: Text('Check Point:'),
+                title: Text(_policeInfo['checkPoint'])),
             Divider(),
             ListTile(
-                leading: Text('Email:'),
-                title: Text(_policeInfo['email'])),
+                leading: Text('Email:'), title: Text(_policeInfo['email'])),
             Divider(),
             ListTile(
-                leading: Text('Address:'),
-                title: Text(_policeInfo['address'])),
+                leading: Text('Address:'), title: Text(_policeInfo['address'])),
             Divider()
           ],
         ),

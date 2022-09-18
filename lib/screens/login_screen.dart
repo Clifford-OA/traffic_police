@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:traffic_police/auth/auth.dart';
 import 'package:traffic_police/auth/police.dart';
+import 'package:traffic_police/screens/create_user_screen.dart';
+import 'package:traffic_police/screens/forgot_password.dart';
 import 'package:traffic_police/screens/home_screen.dart';
 import 'package:traffic_police/utils/fetch_police_data.dart';
+import 'package:traffic_police/utils/text_form.dart';
 import 'package:traffic_police/widgets/button_widget.dart';
 import 'package:traffic_police/widgets/header_container.dart';
 
@@ -20,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
 
   bool isLoading = false;
+  bool obscureValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,19 +37,35 @@ class _LoginScreenState extends State<LoginScreen> {
                 margin: EdgeInsets.only(left: 20, right: 20, top: 30),
                 child: ListView(
                   children: [
-                    _textInput(
+                    textInput(
                         hint: "Corperate Email",
                         icon: Icons.email,
                         controller: _emailController),
-                    _textInput(
+                    textInputPassword(
                         hint: "Password",
-                        icon: Icons.vpn_key,
-                        controller: _passwordController),
+                        icon: Icons.lock,
+                        controller: _passwordController,
+                        suffixIcon: Icon(obscureValue
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        obscureValue: obscureValue,
+                        onPressedSuffixIcon: () {
+                          setState(() {
+                            obscureValue = !obscureValue;
+                          });
+                        }),
                     Container(
                       margin: EdgeInsets.only(top: 10, bottom: 20),
                       alignment: Alignment.centerRight,
-                      child: Text(
-                        "Forgot Password?",
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => ForgotPassword()))),
+                        child: Text(
+                          "Forgot Password?",
+                          style: TextStyle(color: Colors.blueAccent),
+                        ),
                       ),
                     ),
                     Padding(
@@ -66,10 +86,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => CreateUserScreen()))),
+                          child: Text(
+                            "Register",
+                            style: TextStyle(fontSize: 20, color: Colors.blue),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -100,24 +135,5 @@ class _LoginScreenState extends State<LoginScreen> {
             .showSnackBar(SnackBar(content: Text(value['message'])));
       }
     });
-  }
-
-  Widget _textInput({controller, hint, icon}) {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        color: Colors.white,
-      ),
-      padding: EdgeInsets.only(left: 10),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: hint,
-          prefixIcon: Icon(icon),
-        ),
-      ),
-    );
   }
 }

@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:traffic_police/screens/vehicle_info.dart';
+
+import '../utils/validation.dart';
+import '../utils/vehicleTextBox.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -9,8 +14,29 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  CollectionReference users = FirebaseFirestore.instance.collection('vehicles');
+
   final TextEditingController _vehicleNumberController =
       TextEditingController();
+  final GlobalKey<FormState> _vehicleNumberFormKey = GlobalKey();
+  final TextEditingController _vehicleNumber = TextEditingController();
+  final TextEditingController _vehicleRegion = TextEditingController();
+  final TextEditingController _vehicleYear = TextEditingController();
+
+  late String _vehicleNumberText;
+  bool _isLoading = false;
+
+  var vehicleYearInputFormatter = [
+    FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+    FilteringTextInputFormatter.deny(RegExp('[]'))
+  ];
+  var vehicleRegionInputFormatter = [
+    FilteringTextInputFormatter.allow(RegExp('[A-Z]')),
+  ];
+
+  var vehicleNumberInputFormatter = [
+    FilteringTextInputFormatter.allow(RegExp('[0-9]'))
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -59,35 +85,78 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(color: Colors.blue),
                 child: IntrinsicHeight(
-                  child: Row(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _vehicleNumberController,
-                          // keyboardType: TextInputType.,
-                          decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            // border: OutlineInputBorder(),
-                            hintText: 'GJ01XXX1234',
-                          ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: SizedBox(
+                                width: 100.0,
+                                child: vehicleNumberformTextBox(
+                                  Validation().regionValidation,
+                                  null,
+                                  TextInputType.text,
+                                  _vehicleRegion,
+                                  'Region\nCode',
+                                  'AS',
+                                  2,
+                                  vehicleRegionInputFormatter,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+                              child: SizedBox(
+                                width: 115.0,
+                                child: vehicleNumberformTextBox(
+                                  Validation().vehicleNumberValidation,
+                                  null,
+                                  TextInputType.number,
+                                  _vehicleNumber,
+                                  'Number',
+                                  '1234',
+                                  4,
+                                  vehicleNumberInputFormatter,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              child: SizedBox(
+                                width: 100.0,
+                                child: vehicleNumberformTextBox(
+                                  Validation().yearValidation,
+                                  null,
+                                  TextInputType.number,
+                                  _vehicleYear,
+                                  'Year',
+                                  '22',
+                                  2,
+                                  vehicleYearInputFormatter,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      VehicleInformationScreen(
-                                          _vehicleNumberController.text
-                                              .trim())));
-                        },
-                        child: Text('Go!'),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.white)),
+                      Container(
+                        child: Center(
+                          child: !_isLoading
+                              ? TextButton(
+                                  onPressed: _validateAndSearchVehicleNumber,
+                                  child: Text('Go!'),
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.white)),
+                                )
+                              : CircularProgressIndicator(),
+                        ),
                       ),
                     ],
                   ),
@@ -96,5 +165,36 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
     );
+  }
+
+  void _validateAndSearchVehicleNumber() async {
+    if (_vehicleNumberFormKey.currentState!.validate()) {
+      _vehicleNumberText =
+          '${_vehicleRegion.text}-${_vehicleNumber.text}-${_vehicleYear.text}';
+      setState(() {
+        _isLoading = true;
+      });
+      await users.get().then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          List<dynamic> vehicles = data['vehicleNumber'];
+          for (var i = 0; i < vehicles.length; i++) {
+            if (vehicles[i] == _vehicleNumberText) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          VehicleInformationScreen(_vehicleNumberText)));
+              break;
+            }
+          }
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('the vehicle number $_vehicleNumberText is fake')));
+        });
+      });
+    }
   }
 }

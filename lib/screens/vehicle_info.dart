@@ -23,13 +23,12 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        if (doc.id == vehicleNumber) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        if (data['vehicleNumber'] == vehicleNumber) {
           List<dynamic> data = doc['finedList'];
           print(data);
           for (var i = 0; i < data.length; i++) {
-            // if(data[i]['status'] == 'done') {
             list.add(ChallanCard(data[i]));
-            // }
           }
         }
       });
@@ -73,10 +72,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
                         children: [
                           FutureBuilder<Widget>(
                               future: _displayVehicleInfo(
-                                  context,
-                                  widget.vehicleNumber
-                                      .toString()
-                                      .toUpperCase()),
+                                  context, widget.vehicleNumber),
                               builder: (BuildContext context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.done) {
@@ -102,11 +98,11 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
                             child: Column(
                               children: [
                                 Text(
-                                  'Registration number',
+                                  'Vehicle number',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 Text(
-                                  'DL9cx8656',
+                                  widget.vehicleNumber,
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 24,

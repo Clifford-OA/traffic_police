@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_police/utils/Icon_model.dart';
 
-import 'package:traffic_police/screens/create_user_screen.dart';
 import 'package:traffic_police/screens/history_screen.dart';
 import 'package:traffic_police/screens/profile_screen.dart';
 import 'package:traffic_police/screens/report_violator_screen.dart';
@@ -51,13 +50,13 @@ class HomeScreenitem extends StatelessWidget {
                             builder: (context) => ProfileScreen()));
                     ;
                     break;
-                  default:
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CreateUserScreen()));
-                    ;
-                    break;
+                  // default:
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => ProfileScreen()));
+                    
+                  //   break;
                 }
               }),
               child: Card(

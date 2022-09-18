@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     IconModel(id: 2, image: "assets/report.png", title: "Report Violator"),
     IconModel(id: 3, image: "assets/history.png", title: "History"),
     IconModel(id: 4, image: "assets/info.png", title: "Profile"),
-    IconModel(id: 5, image: "assets/add_user.png", title: "Create User")
+    // IconModel(id: 5, image: "assets/add_user.png", title: "Edit Profile")
   ];
 
   @override
@@ -82,37 +82,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // Widget _buildCard(index, icon, title) {
-  //   return Container(
-  //     width: 200,
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.all(
-  //         Radius.circular(50),
-  //       ),
-  //       color: Color(0xff1592ff),
-  //     ),
-  //     child: Center(
-  //       child: Column(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           Icon(
-  //             icon,
-  //             size: 50.0,
-  //             color: Colors.white,
-  //           ),
-  //           SizedBox(height: 10.0),
-  //           Text(
-  //             title,
-  //             style: TextStyle(
-  //               fontSize: 15,
-  //               color: Colors.white70,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
 }

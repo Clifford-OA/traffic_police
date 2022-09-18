@@ -6,6 +6,7 @@ class HistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String amount = service['amount'];
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: GestureDetector(
@@ -15,7 +16,7 @@ class HistoryTile extends StatelessWidget {
               service['description'],
               overflow: TextOverflow.ellipsis,
             ),
-            subtitle: Text('¢ 20.00',style: TextStyle(color: Colors.purple)),
+            subtitle: Text('¢ $amount',style: TextStyle(color: Colors.purple)),
             trailing: service['status']
                 ? Text('Paid',
                     style: TextStyle(fontSize: 20, color: Colors.green))

@@ -28,12 +28,10 @@ class _HistoryLogScreenState extends State<HistoryLogScreen> {
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        List<dynamic> data = doc['finedList'];
-        for (var i = 0; i < data.length; i++) {
-          if (data[i]['tid'] == userId) {
-            list.add(HistoryTile(data[i]));
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          if (data['tid'] == userId) {
+            list.add(HistoryTile(data));
           }
-        }
       });
     });
     return list.length > 1
