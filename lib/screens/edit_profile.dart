@@ -153,8 +153,8 @@ class _EditUserProfileState extends State<EditUserProfile> {
         'tel': _telController.text
       }).then((value) {
         _fetchPoliceData.loadUserData(context);
-        // _reloadUserData();
-        // Navigator.pushNamed(context, 'HomeScreen');
+        Navigator.pop(context);
+
         print('created successfully');
       }).catchError((error) {
         print("Failed to book: $error");

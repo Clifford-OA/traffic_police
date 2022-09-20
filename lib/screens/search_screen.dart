@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:traffic_police/screens/vehicle_info.dart';
+import 'package:traffic_police/widgets/rounded_button.dart';
 
 import '../utils/validation.dart';
 import '../utils/vehicleTextBox.dart';
@@ -14,10 +15,9 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  CollectionReference users = FirebaseFirestore.instance.collection('vehicles');
+  CollectionReference fineList =
+      FirebaseFirestore.instance.collection('fineList');
 
-  final TextEditingController _vehicleNumberController =
-      TextEditingController();
   final GlobalKey<FormState> _vehicleNumberFormKey = GlobalKey();
   final TextEditingController _vehicleNumber = TextEditingController();
   final TextEditingController _vehicleRegion = TextEditingController();
@@ -67,10 +67,13 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-            Text(
-              'the supervision of road users compliance, with the traffic legislation, and punishment for non-compliance.',
-              style: TextStyle(
-                fontSize: 17,
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                'the supervision of road users compliance, with the traffic legislation, and punishment for non-compliance.',
+                style: TextStyle(
+                  fontSize: 17,
+                ),
               ),
             ),
             Padding(
@@ -82,83 +85,85 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             Container(
                 margin: EdgeInsets.all(10),
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(color: Colors.blue),
+                padding: EdgeInsets.all(10),
+                // decoration: BoxDecoration(color: Colors.blue),
                 child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-                        child: Row(
-                          children: <Widget>[
-                            Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                              child: SizedBox(
-                                width: 100.0,
-                                child: vehicleNumberformTextBox(
-                                  Validation().regionValidation,
-                                  null,
-                                  TextInputType.text,
-                                  _vehicleRegion,
-                                  'Region\nCode',
-                                  'AS',
-                                  2,
-                                  vehicleRegionInputFormatter,
+                  child: Form(
+                    key: _vehicleNumberFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                child: SizedBox(
+                                  width: 100.0,
+                                  child: vehicleNumberformTextBox(
+                                    Validation().regionValidation,
+                                    null,
+                                    TextInputType.text,
+                                    _vehicleRegion,
+                                    'Region\nCode',
+                                    'AS',
+                                    2,
+                                    vehicleRegionInputFormatter,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-                              child: SizedBox(
-                                width: 115.0,
-                                child: vehicleNumberformTextBox(
-                                  Validation().vehicleNumberValidation,
-                                  null,
-                                  TextInputType.number,
-                                  _vehicleNumber,
-                                  'Number',
-                                  '1234',
-                                  4,
-                                  vehicleNumberInputFormatter,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 10, 10, 10),
+                                child: SizedBox(
+                                  width: 115.0,
+                                  child: vehicleNumberformTextBox(
+                                    Validation().vehicleNumberValidation,
+                                    null,
+                                    TextInputType.number,
+                                    _vehicleNumber,
+                                    'Number',
+                                    '1234',
+                                    4,
+                                    vehicleNumberInputFormatter,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                              child: SizedBox(
-                                width: 100.0,
-                                child: vehicleNumberformTextBox(
-                                  Validation().yearValidation,
-                                  null,
-                                  TextInputType.number,
-                                  _vehicleYear,
-                                  'Year',
-                                  '22',
-                                  2,
-                                  vehicleYearInputFormatter,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                child: SizedBox(
+                                  width: 100.0,
+                                  child: vehicleNumberformTextBox(
+                                    Validation().yearValidation,
+                                    null,
+                                    TextInputType.number,
+                                    _vehicleYear,
+                                    'Year',
+                                    '22',
+                                    2,
+                                    vehicleYearInputFormatter,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        child: Center(
-                          child: !_isLoading
-                              ? TextButton(
-                                  onPressed: _validateAndSearchVehicleNumber,
-                                  child: Text('Go!'),
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.white)),
-                                )
-                              : CircularProgressIndicator(),
+                        Container(
+                          child: Center(
+                            child: !_isLoading
+                                ? RoundedButton(
+                                    buttonName: 'Search',
+                                    action: _validateAndSearchVehicleNumber,
+                                  )
+                                : CircularProgressIndicator(),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 )),
           ],
@@ -174,26 +179,25 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         _isLoading = true;
       });
-      await users.get().then((QuerySnapshot querySnapshot) {
+      print('i am in');
+      await fineList.get().then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          List<dynamic> vehicles = data['vehicleNumber'];
-          for (var i = 0; i < vehicles.length; i++) {
-            if (vehicles[i] == _vehicleNumberText) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          VehicleInformationScreen(_vehicleNumberText)));
-              break;
-            }
+          String vehicles = data['vehicleNumber'];
+          if (vehicles == _vehicleNumberText) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        VehicleInformationScreen(_vehicleNumberText)));
           }
-          setState(() {
-            _isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('the vehicle number $_vehicleNumberText is fake')));
         });
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text('the vehicle number $_vehicleNumberText has no fines')));
       });
     }
   }

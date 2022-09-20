@@ -6,17 +6,26 @@ class HistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String amount = service['amount'];
+    String amount = service['fineId'];
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: GestureDetector(
           child: ListTile(
             leading: Image.network(service['imgUrl']),
-            title: Text(
-              service['description'],
-              overflow: TextOverflow.ellipsis,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  service['vehicleNumber'],
+                  overflow: TextOverflow.ellipsis,
+                ),
+                 Text(
+                  service['description'],
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-            subtitle: Text('¢ $amount',style: TextStyle(color: Colors.purple)),
+            subtitle: Text('$amount', style: TextStyle(color: Colors.purple)),
             trailing: service['status']
                 ? Text('Paid',
                     style: TextStyle(fontSize: 20, color: Colors.green))

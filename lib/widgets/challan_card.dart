@@ -1,14 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChallanCard extends StatelessWidget {
   final service;
-  const ChallanCard(this.service,{Key? key}) : super(key: key);
-  
-
+  const ChallanCard(this.service, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String challanId = service['fineId'];
+    Timestamp timestamp = service['fine_date'];
+    final challanDate = timestamp.toDate();
+    final shortMonth = challanDate.toString().split(' ')[0];
+    String paidDate = '';
+
+    if (service['paid_date'].toString().isNotEmpty) {
+      Timestamp timestamp = service['paid_date'];
+      final challanPaidDate = timestamp.toDate();
+      paidDate = challanPaidDate.toString().split(' ')[0];
+    }
+
+    print(shortMonth);
+    print(paidDate);
     return Container(
       margin: EdgeInsets.all(5),
       padding: EdgeInsets.all(10),
@@ -29,7 +41,7 @@ class ChallanCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             child: Text(
-              'Challan ID: #$challanId',
+              'Challan ID: $challanId',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -48,11 +60,11 @@ class ChallanCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'Challan Date',
+                        'Issued Date',
                         style: TextStyle(color: Colors.grey.shade400),
                       ),
                       Text(
-                        '19 Nov, 20',
+                        '$shortMonth',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 24,
@@ -66,7 +78,7 @@ class ChallanCard extends StatelessWidget {
                         style: TextStyle(color: Colors.grey.shade400),
                       ),
                       Text(
-                        '19 Nov, 20',
+                        paidDate.isNotEmpty ? '$paidDate' : '',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 24,
@@ -88,7 +100,8 @@ class ChallanCard extends StatelessWidget {
                       Text(
                         service['status'] ? 'Paid' : 'Not Paid',
                         style: TextStyle(
-                            color: Colors.black,
+                            color:
+                                service['status'] ? Colors.green : Colors.red,
                             fontSize: 24,
                             fontWeight: FontWeight.w400),
                       ),

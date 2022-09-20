@@ -17,4 +17,21 @@ class FetchPoliceData {
       policeClass.policeRef = data;
     });
   }
+
+  void loadFineTypes(BuildContext context) async {
+    final policeClass = Provider.of<Police>(context, listen: false);
+
+    List<dynamic> fineInfo = [];
+
+    await FirebaseFirestore.instance
+        .collection('fineInfo')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        fineInfo.add(data);
+      });
+    });
+    policeClass.fineInfo.addAll(fineInfo);
+  }
 }

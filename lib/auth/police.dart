@@ -24,6 +24,8 @@ class Police extends ChangeNotifier {
     await firestoreRef.set(toMap());
   }
 
+  List<dynamic> fineInfo = [];
+
   Map<String, dynamic> toMap() {
     return {
       'tid': tid,
@@ -63,18 +65,25 @@ class Police extends ChangeNotifier {
   }
 }
 
+class FineInfo {
+  FineInfo(this.charge, this.description, this.fineCode, this.title);
+  String charge;
+  String description;
+  String fineCode;
+  String title;
+  Map<String, String> get serviceRef {
+    return {
+      'charge': charge,
+      'title': title,
+      'description': description,
+      'fineCode': fineCode
+    };
+  }
 
-// class Service {
-//   Service(this.duration, this.price, this.title);
-//   String title;
-//   double price;
-//   String duration;
-//   Map<String, dynamic> get serviceRef {
-//     return {'price': price, 'title': title};
-//   }
-//   set serviceRef(dynamic data) {
-//     title = data['title'];
-//     price = data['price'].toDouble();
-//     duration = data['duration'];
-//   }
-// }
+  set serviceRef(dynamic data) {
+    title = data['title'];
+    charge = data['charge'].toDouble();
+    description = data['description'];
+    fineCode = data['fine_code'];
+  }
+}

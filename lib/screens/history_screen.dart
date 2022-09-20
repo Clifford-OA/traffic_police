@@ -29,9 +29,9 @@ class _HistoryLogScreenState extends State<HistoryLogScreen> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          if (data['tid'] == userId) {
-            list.add(HistoryTile(data));
-          }
+        if (data['tid'] == userId) {
+          list.add(HistoryTile(data));
+        }
       });
     });
     return list.length > 1

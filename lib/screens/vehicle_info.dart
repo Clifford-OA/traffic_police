@@ -25,11 +25,7 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
       querySnapshot.docs.forEach((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         if (data['vehicleNumber'] == vehicleNumber) {
-          List<dynamic> data = doc['finedList'];
-          print(data);
-          for (var i = 0; i < data.length; i++) {
-            list.add(ChallanCard(data[i]));
-          }
+          list.add(ChallanCard(data));
         }
       });
     });

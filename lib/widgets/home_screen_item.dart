@@ -34,21 +34,21 @@ class HomeScreenitem extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ReportViolatorScreen()));
-                    ;
+                    
                     break;
                   case 3:
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => HistoryLogScreen()));
-                    ;
+                    
                     break;
                   case 4:
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ProfileScreen()));
-                    ;
+                    
                     break;
                   // default:
                   //   Navigator.push(

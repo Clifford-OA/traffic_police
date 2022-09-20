@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:traffic_police/auth/auth.dart';
 import 'package:traffic_police/auth/police.dart';
 import 'package:traffic_police/screens/login_screen.dart';
 import 'package:traffic_police/utils/dialog_box.dart';
+import 'package:traffic_police/utils/fetch_police_data.dart';
 
 import 'package:traffic_police/widgets/home_screen_item.dart';
 import '../utils/Icon_model.dart';
@@ -17,6 +16,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+    FetchPoliceData _fetchPoliceData = new FetchPoliceData();
+
+
   List<IconModel> homeIcons = [
     IconModel(id: 1, image: "assets/search.png", title: "Search"),
     IconModel(id: 2, image: "assets/report.png", title: "Report Violator"),
@@ -24,6 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
     IconModel(id: 4, image: "assets/info.png", title: "Profile"),
     // IconModel(id: 5, image: "assets/add_user.png", title: "Edit Profile")
   ];
+
+  @override
+  void initState() {
+    _fetchPoliceData.loadFineTypes(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

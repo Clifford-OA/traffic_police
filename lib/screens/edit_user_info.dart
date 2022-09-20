@@ -196,14 +196,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
 // validate and update stylist info
-  void _validateAndCreateService() async {
-    CollectionReference stylist =
-        FirebaseFirestore.instance.collection('stylists');
-    final stylistClass = Provider.of<Police>(context, listen: false);
-    String tid = stylistClass.tid;
+  void _validateAndEditUser() async {
+    CollectionReference police =
+        FirebaseFirestore.instance.collection('police');
+    final policeClass = Provider.of<Police>(context, listen: false);
+    String tid = policeClass.tid;
     final errorResult = validateName();
     if (errorResult['status']) {
-      await stylist.doc(tid).update({
+      await police.doc(tid).update({
         'name': name,
         'checkPoint': checkPoint,
         'tel': _tel,

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class SendEmailClass {
   Future sendEmail({toName, description, fineAmount, toEmail}) async {
@@ -27,5 +29,40 @@ class SendEmailClass {
         }));
     print(response);
     return response;
+  }
+
+  Future<void> sendMail(
+      {toName, description, fineAmount, toEmail, fineId, context}) async {
+    String bodyCharge = 'This violation incur a fair fine of GHC $fineAmount';
+    String bodyNote =
+        'Take Note, The fine will be increased by 6% of the total amount if you do not pay in three days after you have received the message';
+    String mess =
+        'You got a fine message from MTTD(Motor Traffic and Transport Department:';
+    String bodyId = 'Fine ID or number is: $fineId';
+    String body =
+        'Hello $toName,\n $mess \n For $description \n $bodyCharge \n $bodyId \n $bodyNote';
+    final Email email = Email(
+      body: body,
+      subject: 'FINE MESSAGE FROM MTTD - GHANA POLICE',
+      recipients: [toEmail],
+      // attachmentPaths: attachments,
+      // isHTML: isHTML,
+    );
+
+    String platformResponse;
+
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      print(error);
+      platformResponse = error.toString();
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(platformResponse),
+      ),
+    );
   }
 }
