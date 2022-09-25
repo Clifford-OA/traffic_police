@@ -36,7 +36,7 @@ class DialogBox {
                   },
                 ),
                 actions: <Widget>[
-                  FlatButton(
+                  OutlinedButton(
                     child: Text(
                       "No",
                       style: TextStyle(
@@ -51,11 +51,10 @@ class DialogBox {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) => HomeScreen()));
-                      // Navigator.of(context, rootNavigator: true).pop(false);
-                      // Navigator.pop(context, false);
+                      
                     },
                   ),
-                  FlatButton(
+                  OutlinedButton(
                     child: Text(
                       "Yes",
                       style: TextStyle(

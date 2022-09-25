@@ -7,6 +7,7 @@ import 'package:traffic_police/widgets/rounded_button.dart';
 import '../utils/validation.dart';
 import '../utils/vehicleTextBox.dart';
 
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
 
@@ -17,6 +18,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   CollectionReference fineList =
       FirebaseFirestore.instance.collection('fineList');
+  CollectionReference civilian =
+      FirebaseFirestore.instance.collection('civilian');
 
   final GlobalKey<FormState> _vehicleNumberFormKey = GlobalKey();
   final TextEditingController _vehicleNumber = TextEditingController();
@@ -25,6 +28,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   late String _vehicleNumberText;
   bool _isLoading = false;
+  late Map<String, dynamic> violatorData;
 
   var vehicleYearInputFormatter = [
     FilteringTextInputFormatter.allow(RegExp('[0-9]')),
@@ -179,26 +183,57 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         _isLoading = true;
       });
-      print('i am in');
-      await fineList.get().then((QuerySnapshot querySnapshot) {
+      bool isCivilian = false;
+      await civilian.get().then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          String vehicles = data['vehicleNumber'];
-          if (vehicles == _vehicleNumberText) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        VehicleInformationScreen(_vehicleNumberText)));
+          List<dynamic> vehicles = data['vehicles'];
+          for (var i = 0; i < vehicles.length; i++) {
+            if (vehicles[i] == _vehicleNumberText) {
+              isCivilian = true;
+              violatorData = data;
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VehicleInformationScreen(
+                          _vehicleNumberText, violatorData)));
+            }
           }
         });
-        setState(() {
-          _isLoading = false;
-        });
+      });
+      setState(() {
+        _isLoading = false;
+      });
+      if (!isCivilian) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content:
-                Text('the vehicle number $_vehicleNumberText has no fines')));
-      });
+                Text('the vehicle number $_vehicleNumberText does not exist')));
+      }
+
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //     content:
+      //         Text('the vehicle number $_vehicleNumberText has no fines')));
+
+      // await fineList.get().then((QuerySnapshot querySnapshot) {
+      //   querySnapshot.docs.forEach((doc) {
+      //     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //     String vehicles = data['vehicleNumber'];
+      //     if (vehicles == _vehicleNumberText) {
+      //       Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //               builder: (context) => VehicleInformationScreen(
+      //                   _vehicleNumberText, violatorData)));
+      //     }
+      //   });
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //       content:
+      //           Text('the vehicle number $_vehicleNumberText has no fines')));
+      // });
+
     }
   }
 }

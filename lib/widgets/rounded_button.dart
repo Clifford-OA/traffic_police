@@ -19,7 +19,7 @@ class RoundedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         color: Color(0xff5663ff),
       ),
-      child: FlatButton(
+      child: OutlinedButton(
         onPressed: action, // => Navigator.pushNamed(context, 'HomeScreen'),
         child: Text(
           buttonName,

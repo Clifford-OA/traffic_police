@@ -96,6 +96,13 @@ class Validation {
     return null;
   }
 
+  String? locationValidation(value) {
+    if (value!.isEmpty || value.toString().length < 3) {
+      return 'Location cannot be empty or less than 3 characters';
+    }
+    return null;
+  }
+
   String? yearValidation(value) {
     int currentYear = DateTime.now().year % 2000;
     if (value!.isEmpty) {

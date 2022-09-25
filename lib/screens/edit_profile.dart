@@ -23,17 +23,22 @@ class _EditUserProfileState extends State<EditUserProfile> {
 
   FetchPoliceData _fetchPoliceData = new FetchPoliceData();
 
-  bool _loadImage = false;
+
 
   @override
-  Widget build(BuildContext context) {
-    final policeClass = Provider.of<Police>(context, listen: true);
+  void initState() {
+    final policeClass = Provider.of<Police>(context, listen: false);
     _nameController.text = policeClass.name;
     _checkPointController.text = policeClass.checkPoint;
     _addressController.text = policeClass.address;
     _emailController.text = policeClass.email;
     _telController.text = policeClass.tel;
-    String image = policeClass.imgUrl;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
 
     return Scaffold(
       appBar: AppBar(
@@ -55,36 +60,38 @@ class _EditUserProfileState extends State<EditUserProfile> {
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(5.0),
-                      width: MediaQuery.of(context).size.width / 2,
-                      height: MediaQuery.of(context).size.width / 2,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100.0),
-                        child: _loadImage == false
-                            ? FadeInImage.assetNetwork(
-                                placeholder: 'assets/gh_police.jpg',
-                                image: image,
-                                imageErrorBuilder:
-                                    (context, error, stackTrace) {
-                                  return Image.asset(
-                                    'assets/gh_police.jpg',
-                                  );
-                                },
-                                fit: BoxFit.cover,
-                              )
-                            : Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   children: [
+                //     Container(
+                //       padding: EdgeInsets.all(5.0),
+                //       width: MediaQuery.of(context).size.width / 2,
+                //       height: MediaQuery.of(context).size.width / 2,
+                //       child: ClipRRect(
+                //         borderRadius: BorderRadius.circular(100.0),
+                //         child: _loadImage == false
+                //             ? FadeInImage.assetNetwork(
+                //                 placeholder: 'assets/no_picture.jpg',
+                //                 image: image,
+                //                 imageErrorBuilder:
+                //                     (context, error, stackTrace) {
+                //                   return Image.asset(
+                //                     'assets/no_picture.jpg',
+                //                   );
+                //                 },
+                //                 fit: BoxFit.cover,
+                //               )
+                //             : Center(
+                //                 child: CircularProgressIndicator(),
+                //               ),
+                //       ),
+                //     ),
+                  
+                //   ],
+                // ),
+                SizedBox(height: 50,),
                 Container(
-                  height: 400,
+                  // height: 400,
                   width: double.infinity,
                   margin: EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
@@ -92,6 +99,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
                     children: [
                       textInput(
                           hint: "Name",
+                          // initialValue: _name,
                           formatters: [
                             FilteringTextInputFormatter.allow(
                                 RegExp('[a-zA-Z ]'))
@@ -99,6 +107,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
                           icon: Icons.person,
                           controller: _nameController),
                       textInput(
+                          // initialValue: _checkPoint,
                           hint: "Check Point",
                           icon: Icons.check,
                           controller: _checkPointController),
@@ -108,9 +117,17 @@ class _EditUserProfileState extends State<EditUserProfile> {
                       //     controller: _emailController),
                       textInput(
                           hint: "Tel",
+                          // initialValue: _tel,
                           icon: Icons.phone,
                           formatters: [FilteringTextInputFormatter.digitsOnly],
                           controller: _telController),
+                      textInput(
+                          hint: "Address",
+                          // initialValue: _address,
+                          icon: Icons.home,
+                          // formatters: [FilteringTextInputFormatter.digitsOnly],
+                          controller: _addressController),
+                          SizedBox(height: 100,),
                       RoundedButton(
                         buttonName: 'Update',
                         action: _validateAndUpdateUser,
@@ -120,26 +137,26 @@ class _EditUserProfileState extends State<EditUserProfile> {
                 ),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 270, left: 184),
-              child: CircleAvatar(
-                backgroundColor: Colors.black54,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            )
+            // Padding(
+            //   padding: EdgeInsets.only(bottom: 270, left: 184),
+            //   child: CircleAvatar(
+            //     backgroundColor: Colors.black54,
+            //     child: IconButton(
+            //       icon: Icon(
+            //         Icons.edit,
+            //         color: Colors.white,
+            //       ),
+            //       onPressed: () {},
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),
     );
   }
 
-  // validate and update stylist info
+  // validate and update police info
   void _validateAndUpdateUser() async {
     CollectionReference stylist =
         FirebaseFirestore.instance.collection('police');
@@ -150,9 +167,12 @@ class _EditUserProfileState extends State<EditUserProfile> {
       await stylist.doc(tid).update({
         'name': _nameController.text,
         'checkPoint': _checkPointController.text,
-        'tel': _telController.text
+        'tel': _telController.text,
+        'address': _addressController.text,
       }).then((value) {
         _fetchPoliceData.loadUserData(context);
+        // Navigator.push(context,
+        //     MaterialPageRoute(builder: ((context) => ProfileScreen())));
         Navigator.pop(context);
 
         print('created successfully');
@@ -174,6 +194,11 @@ class _EditUserProfileState extends State<EditUserProfile> {
       return errorHandler;
     } else if (_checkPointController.text.length < 3) {
       errorHandler['message'] = 'check point should be less than 3 characters';
+      return errorHandler;
+    } else if ((int.tryParse(_addressController.text) == null) &&
+        (_addressController.text.length < 4)) {
+      errorHandler['message'] =
+          'address should not be less than 4 characters and should not be a number';
       return errorHandler;
     } else if (_nameController.text.length < 3) {
       errorHandler['message'] =

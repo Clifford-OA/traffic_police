@@ -36,11 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final police = Provider.of<Police>(context, listen: false);
-    bool _admin = police.admin;
     String _name = police.name;
     print(_name + " name");
-    final double height = MediaQuery.of(context).size.height;
-    final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 250,

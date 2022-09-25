@@ -32,6 +32,7 @@ class FetchPoliceData {
         fineInfo.add(data);
       });
     });
+    policeClass.fineInfo = [];
     policeClass.fineInfo.addAll(fineInfo);
   }
 }

@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:telephony/telephony.dart';
 
 class SendEmailClass {
+  final Telephony telephony = Telephony.instance;
+
   Future sendEmail({toName, description, fineAmount, toEmail}) async {
     final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
     const serviceId = 'service_d7wq1ps';
@@ -64,5 +67,36 @@ class SendEmailClass {
         content: Text(platformResponse),
       ),
     );
+  }
+
+  Future sendSms({
+    vehicleNum,
+    description,
+    fineAmount,
+    phone,
+    location,
+    toEmail,
+    fineId,
+  }) async {
+    // bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
+
+    String title = 'FINE FROM MTTD - GHANA POLICE';
+    // String bodyCharge = 'Fine Amount: GHC $fineAmount';
+    // String fineTitle = 'Offense: $description';
+    String vehicle = 'Vehicle Number: $vehicleNum';
+    String mess = 'Download "MTTD Fine Payment App" from playstore';
+    String fine = 'Fine ID: $fineId';
+    String body =
+        '$title\n$fine\n$vehicle\n$mess';
+
+    final SmsSendStatusListener listener = (SendStatus status) {
+      // Handle the status
+      print(status);
+    };
+    await telephony.sendSms(
+        to: phone.toString(), message: body, statusListener: listener);
+
+    // print('sent message');
+    // statusListener: listener);
   }
 }

@@ -4,7 +4,9 @@ import 'package:traffic_police/widgets/challan_card.dart';
 
 class VehicleInformationScreen extends StatefulWidget {
   final vehicleNumber;
-  const VehicleInformationScreen(this.vehicleNumber, {Key? key})
+  final violatorData;
+  const VehicleInformationScreen(this.vehicleNumber, this.violatorData,
+      {Key? key})
       : super(key: key);
 
   @override
@@ -33,8 +35,14 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
         ? Column(
             children: list,
           )
-        : Center(
-            child: Text('Your history list is empty'),
+        : Padding(
+            padding: const EdgeInsets.only(top: 200.0),
+            child: Center(
+              child: Text(
+                '"$vehicleNumber" has no fine history',
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
           );
   }
 
@@ -86,54 +94,65 @@ class _VehicleInformationScreenState extends State<VehicleInformationScreen> {
                     Padding(
                       padding: EdgeInsets.only(
                           top: 15, left: 15, bottom: 10, right: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 30),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Vehicle number',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  widget.vehicleNumber,
+                      child: Container(
+                        margin: EdgeInsets.only(right: 30),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Text(
+                                'Owner name',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(widget.violatorData['name'].toString(),
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 24,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  'Last Updated',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text('3 June 2016',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w400)),
-                              ],
-                            ),
-                          ),
-                          Container(
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(24)),
+                                      fontWeight: FontWeight.w400)),
+                              SizedBox(
+                                height: 5,
                               ),
-                              child: Center(
-                                child: Image.asset(
-                                  'assets/gh_police.jpg',
-                                  fit: BoxFit.fill,
-                                ),
-                              )),
-                        ],
+                              Text(
+                                'Vehicle number',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                widget.vehicleNumber,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Phone number',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                widget.violatorData['phone'],
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'GPS Address',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                widget.violatorData['address'],
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],

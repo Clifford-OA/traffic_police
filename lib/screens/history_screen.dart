@@ -25,6 +25,7 @@ class _HistoryLogScreenState extends State<HistoryLogScreen> {
     ];
     await FirebaseFirestore.instance
         .collection('fineList')
+        .orderBy('fine_date', descending: true)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
@@ -34,13 +35,17 @@ class _HistoryLogScreenState extends State<HistoryLogScreen> {
         }
       });
     });
+
     return list.length > 1
         ? Column(
             children: list,
           )
-        : Center(
-            child: Text('Your history list is empty'),
-          );
+        : Padding(
+          padding: const EdgeInsets.only(top: 30.0),
+          child: Center(
+              child: Text('Your history list is empty'),
+            ),
+        );
   }
 
   @override

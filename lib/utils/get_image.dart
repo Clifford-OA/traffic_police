@@ -19,7 +19,7 @@ class GetImage {
 
   Future imageToFireStorage() async {
     var storeImage = FirebaseStorage.instance.ref().child(image.path);
-    var task = await storeImage.putFile(image);
+    await storeImage.putFile(image);
     var reportImgUrl = await storeImage.getDownloadURL();
     return reportImgUrl;
   }

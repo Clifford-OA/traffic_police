@@ -28,7 +28,7 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   final TextEditingController _vehicleRegion = TextEditingController();
   final TextEditingController _vehicleYear = TextEditingController();
   final TextEditingController _description = TextEditingController();
-  // final TextEditingController _amount = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
 
   late String _vehicleNumberText;
   late io.File imageFile;
@@ -44,14 +44,13 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
     FilteringTextInputFormatter.allow(RegExp('[0-9]'))
   ];
 
-  bool _loadImage = false;
   bool _isLoading = false;
   bool _isLoadingImage = false;
   String imgUrl = '';
 
   GetImage _getImgRef = new GetImage();
-  String fine_code = '';
-  String selectedAmount = '';
+  String fineCode = '';
+  String selectedAmount = '0';
   String selectedFineTitle = 'select title';
   // List<String> _fineAmounts = [
   //   'select one',
@@ -69,10 +68,7 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   void initState() {
     final policeClass = Provider.of<Police>(context, listen: false);
     fineInfo = policeClass.fineInfo;
-    print(fineInfo);
     fineInfo.forEach((fine) => {fineTitle.add(fine['title'])});
-
-    // TODO: implement initState
     print(DateTime.now());
     setState(() {
       _vehicleRegion.clear();
@@ -194,18 +190,19 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
                           ],
                         ),
                       ),
-                      // Container(
-                      //   padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      //   child: TextField(
-                      //     controller: _description,
-                      //     decoration: const InputDecoration(
-                      //       filled: true,
-                      //       border: OutlineInputBorder(),
-                      //       hintText: 'Description',
-                      //     ),
-                      //     maxLines: 3,
-                      //   ),
-                      // ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: TextFormField(
+                          validator: Validation().locationValidation,
+                          controller: _locationController,
+                          decoration: const InputDecoration(
+                            filled: true,
+                            border: OutlineInputBorder(),
+                            hintText: 'Location',
+                          ),
+                          // maxLines: 3,
+                        ),
+                      ),
                       // SizedBox(
                       //   height: 20,
                       // ),
@@ -277,11 +274,11 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
                                 for (var i in fineInfo) {
                                   if (i['title'] == newValue!) {
                                     selectedAmount = i['charge'];
-                                    fine_code = i['fine_code'];
+                                    fineCode = i['fine_code'];
                                     break;
                                   }
+                                  selectedAmount = '0';
                                 }
-
                                 // fineInfo.map((data) => {
 
                                 // });
@@ -338,9 +335,7 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
   }
 
   Future _getImage() async {
-    setState(() {
-      _loadImage = true;
-    });
+    setState(() {});
     // print(_loadImage);
     print(_isLoadingImage);
     dynamic imageUrl = await _getImgRef.getImage();
@@ -351,7 +346,7 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
       // imgUrl = imageUrl.toString().split("'")[1];
     });
     setState(() {
-      _loadImage = false;
+      
     });
     imgUrl = await _getImgRef.imageToFireStorage();
   }
@@ -383,9 +378,6 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
         FirebaseFirestore.instance.collection('civilian');
     late Map<String, dynamic> violatorData;
 
-    // loadImage url
-    // imgUrl = await _getImgRef.imageToFireStorage();
-
     await civilian.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -405,13 +397,22 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
       setState(() {
         _isLoading = false;
       });
+      SendEmailClass().sendSms(
+          phone: violatorData['phone'],
+          toEmail: violatorData['email'],
+          description: selectedFineTitle,
+          fineAmount: selectedAmount,
+          fineId: docId,
+          location: _locationController.text,
+          vehicleNum: _vehicleNumberText);
+      // print(violatorData);
       // SendEmailClass().sendMail(
       //     context: context,
       //     toEmail: violatorData['email'],
       //     description: selectedFineTitle,
       //     fineAmount: selectedAmount,
       //     fineId: docId,
-          // toName: violatorData['name']);
+      //     toName: violatorData['name']);
       // _addToBookDateList();
       // SendEmailClass().sendEmail(
       //     toEmail: violatorData['email'],
@@ -433,9 +434,10 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
       'vehicleNumber': _vehicleNumberText,
       'amount': selectedAmount,
       'description': selectedFineTitle,
-      'fine_code': fine_code,
+      'fine_code': fineCode,
       'imgUrl': imgUrl,
       'fineId': fineId,
+      'location': _locationController.text,
       'fine_date': DateTime.now(),
       'paid_date': '',
       'violator_email': violatorDetail['email'],
@@ -454,8 +456,8 @@ class _ReportViolatorScreenState extends State<ReportViolatorScreen> {
     } else if (!_isLoadingImage) {
       errorHandler['message'] = 'Image should not be empty';
       return errorHandler;
-    } else if (selectedAmount == '') {
-      errorHandler['message'] = 'Select fine amount';
+    } else if (selectedAmount == '0') {
+      errorHandler['message'] = 'Title of rule violated not selected';
       return errorHandler;
     } else {
       errorHandler['status'] = true;

@@ -45,8 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         icon: Icons.lock,
                         controller: _passwordController,
                         suffixIcon: Icon(obscureValue
-                            ? Icons.visibility
-                            : Icons.visibility_off),
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                         obscureValue: obscureValue,
                         onPressedSuffixIcon: () {
                           setState(() {

@@ -41,7 +41,7 @@ class ChallanCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             child: Text(
-              'Challan ID: $challanId',
+              'Fine ID: $challanId',
               style: TextStyle(fontSize: 16),
             ),
           ),
